@@ -2,16 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { textFromBlocks } from "@/lib/content";
-
-async function uploadFiles(files) {
-  if (!files.length) return [];
-  const body = new FormData();
-  files.forEach((file) => body.append("files", file));
-  const response = await fetch("/api/uploads", { method: "POST", body });
-  const json = await response.json();
-  if (!response.ok) throw new Error(json.error || "The photo did not upload.");
-  return json.urls;
-}
+import { readResponse, uploadFiles } from "./upload-client";
 
 export function BlogForm({ post }) {
   const [error, setError] = useState("");
@@ -39,7 +30,7 @@ export function BlogForm({ post }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, image })
       });
-      const json = await response.json();
+      const json = await readResponse(response);
       if (!response.ok) {
         setError(json.error || "Could not save.");
         setSaving(false);
@@ -68,7 +59,7 @@ export function BlogForm({ post }) {
       </label>
       <label>Cover photo
         <input className="desk-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => setCoverFile(event.target.files?.[0] || null)} />
-        <span className="desk-hint">Choose a photo from your device. JPG, PNG, or WEBP, up to 8 MB.</span>
+        <span className="desk-hint">Choose a photo from your device. Large photos are reduced before they upload.</span>
         {coverPreview ? <span className="desk-photos"><img src={coverPreview} alt="" /></span> : null}
       </label>
       <label>Or paste a cover photo link

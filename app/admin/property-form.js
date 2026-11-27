@@ -2,16 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { areas } from "@/lib/data";
-
-async function uploadFiles(files) {
-  if (!files.length) return [];
-  const body = new FormData();
-  files.forEach((file) => body.append("files", file));
-  const response = await fetch("/api/uploads", { method: "POST", body });
-  const json = await response.json();
-  if (!response.ok) throw new Error(json.error || "The photo did not upload.");
-  return json.urls;
-}
+import { readResponse, uploadFiles } from "./upload-client";
 
 export function PropertyForm({ property }) {
   const [error, setError] = useState("");
@@ -46,7 +37,7 @@ export function PropertyForm({ property }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, image, gallery: gallery.join("\n") })
       });
-      const json = await response.json();
+      const json = await readResponse(response);
       if (!response.ok) {
         setError(json.error || "Could not save.");
         setSaving(false);
@@ -120,7 +111,7 @@ export function PropertyForm({ property }) {
       </label>
       <label>Main photo
         <input className="desk-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => setMainFile(event.target.files?.[0] || null)} />
-        <span className="desk-hint">Choose a photo from your device. JPG, PNG, or WEBP, up to 8 MB.</span>
+        <span className="desk-hint">Choose a photo from your device. Large photos are reduced before they upload.</span>
         {mainPreview ? <span className="desk-photos"><img src={mainPreview} alt="" /></span> : null}
       </label>
       <label>Or paste a main photo link
