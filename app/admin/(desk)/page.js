@@ -20,8 +20,8 @@ function displayName(session) {
 
 export default async function DashboardPage() {
   const [properties, posts, enquiries, session] = await Promise.all([
-    listProperties(),
-    listPosts(),
+    listProperties({ includeDrafts: true }),
+    listPosts({ includeDrafts: true }),
     listEnquiries(),
     currentSession()
   ]);
@@ -77,7 +77,7 @@ export default async function DashboardPage() {
                 <td><Link href={`/admin/property/${property.id}`}>{property.title}</Link></td>
                 <td>{property.place}</td>
                 <td>{formatPrice(property.price)}</td>
-                <td>{property.status}</td>
+                <td>{property.published === false ? "Draft" : property.status}</td>
               </tr>
             ))}
           </tbody>

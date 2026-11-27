@@ -15,7 +15,7 @@ export async function GET(_request, { params }) {
 export async function PUT(request, { params }) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   const { id } = await params;
-  const current = await getPropertyRecord(id);
+  const current = await getPropertyRecord(id, { includeDrafts: true });
   if (!current) return NextResponse.json({ error: "Not found." }, { status: 404 });
   const body = await request.json();
   const title = String(body.title || current.title).trim();
@@ -39,7 +39,8 @@ export async function PUT(request, { params }) {
     description: String(body.description || "").trim(),
     points: String(body.points || "").split("\n").map((item) => item.trim()).filter(Boolean),
     image,
-    gallery: gallery.length ? gallery : [image]
+    gallery: gallery.length ? gallery : [image],
+    published: body.intent !== "draft"
   };
   try {
     const saved = await saveProperty(property, id);

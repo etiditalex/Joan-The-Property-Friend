@@ -11,7 +11,7 @@ export const metadata = { title: "Admin | Joan Property Friend" };
 export default async function DeskLayout({ children }) {
   const session = await currentSession();
   if (!session) redirect("/admin/login");
-  const [properties, posts, enquiries] = await Promise.all([listProperties(), listPosts(), listEnquiries()]);
+  const [properties, posts, enquiries] = await Promise.all([listProperties({ includeDrafts: true }), listPosts({ includeDrafts: true }), listEnquiries()]);
   return (
     <DeskFrame session={session} counts={{ properties: properties.length, posts: posts.length, enquiries: enquiries.filter((item) => !item.read).length }}>
       {children}

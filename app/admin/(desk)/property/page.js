@@ -8,7 +8,7 @@ export default async function PropertyListPage({ searchParams }) {
   const params = await searchParams;
   const query = String(params.q || "").trim().toLowerCase();
   const previewId = String(params.preview || "");
-  const properties = (await listProperties()).filter((item) => {
+  const properties = (await listProperties({ includeDrafts: true })).filter((item) => {
     if (!query) return true;
     return `${item.title} ${item.place} ${item.type} ${item.status}`.toLowerCase().includes(query);
   });
@@ -24,7 +24,7 @@ export default async function PropertyListPage({ searchParams }) {
       <section className="desk-panel" style={{ marginTop: 0 }}>
         <table className="desk-table">
           <thead>
-            <tr><th>Title</th><th>Type</th><th>Place</th><th>Price</th><th>Status</th><th></th></tr>
+            <tr><th>Title</th><th>Type</th><th>Place</th><th>Price</th><th>Status</th><th>Visibility</th><th></th></tr>
           </thead>
           <tbody>
             {properties.map((property) => (
@@ -34,6 +34,7 @@ export default async function PropertyListPage({ searchParams }) {
                 <td>{property.place}</td>
                 <td>{formatPrice(property.price)}</td>
                 <td>{property.status}</td>
+                <td>{property.published === false ? "Draft" : "Live"}</td>
                 <td><Link href={`/admin/property?preview=${property.id}${query ? `&q=${encodeURIComponent(query)}` : ""}`}>Preview</Link></td>
               </tr>
             ))}

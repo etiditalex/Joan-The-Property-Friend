@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PropertyPreviewPage({ params }) {
   const { id } = await params;
-  const property = await getPropertyRecord(id);
+  const property = await getPropertyRecord(id, { includeDrafts: true });
   if (!property) {
     return (
       <section className="page-intro">

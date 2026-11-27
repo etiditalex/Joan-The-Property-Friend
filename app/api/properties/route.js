@@ -34,7 +34,8 @@ export async function POST(request) {
     description: String(body.description || "").trim(),
     points: lines(body.points),
     image,
-    gallery: gallery.length ? gallery : [image]
+    gallery: gallery.length ? gallery : [image],
+    published: body.intent !== "draft"
   };
   try {
     const saved = await saveProperty(property);

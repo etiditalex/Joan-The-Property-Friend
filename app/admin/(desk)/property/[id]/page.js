@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PropertyDetailPage({ params }) {
   const { id } = await params;
-  const property = await getPropertyRecord(id);
+  const property = await getPropertyRecord(id, { includeDrafts: true });
   if (!property) notFound();
   const shots = property.gallery?.length ? property.gallery : [property.image];
 

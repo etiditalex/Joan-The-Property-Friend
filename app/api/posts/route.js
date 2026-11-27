@@ -21,7 +21,8 @@ export async function POST(request) {
     date: body.date || new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }),
     excerpt: String(body.excerpt || "").trim(),
     image,
-    blocks: blocksFromText(body.body)
+    blocks: blocksFromText(body.body),
+    published: body.intent !== "draft"
   };
   try {
     return NextResponse.json(await savePost(post));

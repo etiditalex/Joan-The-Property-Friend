@@ -15,7 +15,7 @@ export async function GET(_request, { params }) {
 export async function PUT(request, { params }) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
   const { slug } = await params;
-  const current = await getPostRecord(slug);
+  const current = await getPostRecord(slug, { includeDrafts: true });
   if (!current) return NextResponse.json({ error: "Not found." }, { status: 404 });
   const body = await request.json();
   const post = {
@@ -24,7 +24,8 @@ export async function PUT(request, { params }) {
     date: body.date || current.date,
     excerpt: String(body.excerpt || "").trim(),
     image: String(body.image || "").trim(),
-    blocks: blocksFromText(body.body)
+    blocks: blocksFromText(body.body),
+    published: body.intent !== "draft"
   };
   try {
     return NextResponse.json(await savePost(post, slug));

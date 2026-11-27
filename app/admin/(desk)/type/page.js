@@ -10,7 +10,7 @@ const types = [
 ];
 
 export default async function TypePage() {
-  const properties = await listProperties();
+  const properties = await listProperties({ includeDrafts: true });
   return (
     <div className="desk-stats">
       {types.map(([id, label]) => (

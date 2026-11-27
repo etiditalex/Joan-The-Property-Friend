@@ -36,7 +36,7 @@ export function BlogForm({ post }) {
         setSaving(false);
         return;
       }
-      window.location.href = `/blog/${json.slug}`;
+      window.location.href = json.published === false ? `/admin/blog/${json.slug}` : `/blog/${json.slug}`;
     } catch (err) {
       setError(err.message);
       setSaving(false);
@@ -69,7 +69,11 @@ export function BlogForm({ post }) {
         <textarea name="body" style={{ minHeight: 280 }} defaultValue={post ? textFromBlocks(post.blocks) : ""} placeholder={"A paragraph.\n\n## A large heading\n\n### A smaller heading\n\n- A list item"} />
       </label>
       {error ? <p className="desk-error">{error}</p> : null}
-      <button className="desk-gold" type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save post" : "Publish post"}</button>
+      {editing ? <p className="desk-hint">{post.published === false ? "This is a draft. It is hidden from the website." : "This is live on the website."}</p> : null}
+      <div className="desk-actions">
+        <button className="desk-plain" name="intent" value="draft" type="submit" disabled={saving}>Save as draft</button>
+        <button className="desk-gold" name="intent" value="live" type="submit" disabled={saving}>{saving ? "Saving…" : "Publish live"}</button>
+      </div>
     </form>
   );
 }

@@ -131,7 +131,11 @@ export function PropertyForm({ property }) {
         <textarea name="gallery" defaultValue={(property?.gallery || []).join("\n")} />
       </label>
       {error ? <p className="desk-error">{error}</p> : null}
-      <button className="desk-gold" type="submit" disabled={saving}>{saving ? "Saving…" : editing ? "Save changes" : "Publish property"}</button>
+      {editing ? <p className="desk-hint">{property.published === false ? "This is a draft. It is hidden from the website." : "This is live on the website."}</p> : null}
+      <div className="desk-actions">
+        <button className="desk-plain" name="intent" value="draft" type="submit" disabled={saving}>Save as draft</button>
+        <button className="desk-gold" name="intent" value="live" type="submit" disabled={saving}>{saving ? "Saving…" : "Publish live"}</button>
+      </div>
     </form>
   );
 }

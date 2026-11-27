@@ -21,8 +21,11 @@ create table if not exists properties (
   points jsonb not null default '[]'::jsonb,
   image text not null,
   gallery jsonb not null default '[]'::jsonb,
+  published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+alter table properties add column if not exists published boolean not null default true;
 
 create table if not exists posts (
   slug text primary key,
@@ -31,8 +34,11 @@ create table if not exists posts (
   excerpt text default '',
   image text not null,
   blocks jsonb not null default '[]'::jsonb,
+  published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+alter table posts add column if not exists published boolean not null default true;
 
 create table if not exists enquiries (
   id uuid primary key default gen_random_uuid(),

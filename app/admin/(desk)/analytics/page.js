@@ -51,7 +51,7 @@ function countBy(items, labelFor) {
 export default async function AnalyticsPage() {
   const [{ views, warning }, properties, enquiries] = await Promise.all([
     listViews(),
-    listProperties(),
+    listProperties({ includeDrafts: true }),
     listEnquiries()
   ]);
   const propertyViews = views.filter((view) => view.kind === "property" && view.propertyId);
