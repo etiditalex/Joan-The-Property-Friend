@@ -43,8 +43,11 @@ create table if not exists enquiries (
   location text default '',
   budget text default '',
   note text default '',
+  read boolean not null default false,
   created_at timestamptz not null default now()
 );
+
+alter table enquiries add column if not exists read boolean not null default false;
 
 create table if not exists views (
   id uuid primary key default gen_random_uuid(),

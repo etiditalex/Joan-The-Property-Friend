@@ -7,6 +7,7 @@ export function MessagesTable({ enquiries }) {
   const router = useRouter();
   const [rows, setRows] = useState(enquiries);
   const [picked, setPicked] = useState([]);
+  const [opened, setOpened] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -15,6 +16,7 @@ export function MessagesTable({ enquiries }) {
   }, [enquiries]);
 
   const allMarked = rows.length > 0 && picked.length === rows.length;
+  const open = rows.find((item) => item.id === opened);
 
   function toggle(id) {
     setPicked((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
@@ -22,6 +24,32 @@ export function MessagesTable({ enquiries }) {
 
   function markAll() {
     setPicked(allMarked ? [] : rows.map((item) => item.id));
+  }
+
+  async function setRead(ids, read) {
+    if (!ids.length || busy) return false;
+    setBusy(true);
+    setError("");
+    const response = await fetch("/api/enquiries", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids, read })
+    });
+    const json = await response.json().catch(() => ({}));
+    setBusy(false);
+    if (!response.ok) {
+      setError(json.error || "The message was not updated.");
+      return false;
+    }
+    const chosen = new Set(ids.map(String));
+    setRows((current) => current.map((item) => (chosen.has(String(item.id)) ? { ...item, read } : item)));
+    router.refresh();
+    return true;
+  }
+
+  async function openRow(item) {
+    setOpened(item.id);
+    if (!item.read) await setRead([item.id], true);
   }
 
   async function remove(ids, label) {
@@ -43,6 +71,7 @@ export function MessagesTable({ enquiries }) {
     const gone = new Set(ids.map(String));
     setRows((current) => current.filter((item) => !gone.has(String(item.id))));
     setPicked((current) => current.filter((id) => !gone.has(String(id))));
+    if (gone.has(String(opened))) setOpened("");
     router.refresh();
   }
 
@@ -53,17 +82,28 @@ export function MessagesTable({ enquiries }) {
   return (
     <>
       <div className="desk-toolbar">
+        <button className="desk-gold" type="button" disabled={!picked.length || busy} onClick={() => setRead(picked, true)}>
+          Read
+        </button>
+        <button className="desk-plain" type="button" disabled={!picked.length || busy} onClick={() => setRead(picked, false)}>
+          Unmark
+        </button>
         <button className="desk-dark" type="button" disabled={!picked.length || busy} onClick={() => remove(picked, picked.length === 1 ? "Delete this message?" : `Delete ${picked.length} messages?`)}>
           Delete
         </button>
-        <button className="desk-gold" type="button" disabled={busy} onClick={() => remove(rows.map((item) => item.id), "Delete every message?")}>
+        <button className="desk-dark" type="button" disabled={busy} onClick={() => remove(rows.map((item) => item.id), "Delete every message?")}>
           Delete all
-        </button>
-        <button className="desk-plain" type="button" disabled={!picked.length || busy} onClick={() => setPicked([])}>
-          Unmark
         </button>
         {error ? <p className="desk-error">{error}</p> : null}
       </div>
+      {open ? (
+        <article className="message-open">
+          <h3>{open.name}</h3>
+          <p>{open.phone}{open.email ? ` · ${open.email}` : ""}</p>
+          <p>{[open.kind, open.location, open.budget].filter(Boolean).join(" · ")}</p>
+          <p>{open.note || "No note was added."}</p>
+        </article>
+      ) : null}
       <div className="desk-table-wrap">
         <table className="desk-table">
           <thead>
@@ -77,12 +117,13 @@ export function MessagesTable({ enquiries }) {
               <th>Looking for</th>
               <th>Place</th>
               <th>Note</th>
+              <th>Status</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {rows.map((item) => (
-              <tr key={item.id}>
+              <tr key={item.id} className={item.read ? "" : "is-unread"}>
                 <td className="desk-check">
                   <input
                     type="checkbox"
@@ -97,7 +138,9 @@ export function MessagesTable({ enquiries }) {
                 <td>{item.kind}</td>
                 <td>{item.location}</td>
                 <td>{item.note}</td>
+                <td>{item.read ? "Read" : "New"}</td>
                 <td>
+                  <button className="desk-plain" type="button" disabled={busy} onClick={() => openRow(item)}>Open</button>
                   <button className="desk-plain" type="button" disabled={busy} onClick={() => remove([item.id], "Delete this message?")}>
                     Delete
                   </button>

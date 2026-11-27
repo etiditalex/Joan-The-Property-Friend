@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { deleteEnquiries, listEnquiries, saveEnquiry } from "@/lib/store";
+import { deleteEnquiries, listEnquiries, markEnquiriesRead, saveEnquiry } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,19 @@ export async function POST(request) {
       budget: body.budget || "",
       note: String(body.note || "").trim()
     });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function PATCH(request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  const body = await request.json().catch(() => ({}));
+  const ids = Array.isArray(body.ids) ? body.ids : [];
+  if (!ids.length) return NextResponse.json({ error: "Choose a message first." }, { status: 400 });
+  try {
+    await markEnquiriesRead(ids, Boolean(body.read));
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
