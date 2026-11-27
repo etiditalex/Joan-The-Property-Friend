@@ -21,7 +21,7 @@ const main = [
 ];
 
 const others = [
-  ["/admin", "Analytics", "M4 19V10M10 19V5M16 19v-7M22 19H2"],
+  ["/admin/analytics", "Analytics", "M4 19V10M10 19V5M16 19v-7M22 19H2"],
   ["/admin/customers", "Customer", "M12 12a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4ZM5 19c.8-2.6 3-4 7-4s6.2 1.4 7 4"],
   ["/admin/messages", "Messages", "M4 6h16v10H7l-3 3V6Z"],
   ["/admin/team", "Team", "M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM4 19c.6-2.4 2.4-3.5 4-3.5s3.4 1.1 4 3.5M12 19c.6-2.4 2.4-3.5 4-3.5s3.4 1.1 4 3.5"],
@@ -64,9 +64,9 @@ export function DeskFrame({ children, counts, session }) {
           <p className="desk-label">Others</p>
           <nav>
             {others.map(([href, label, icon]) => {
-              const current = label === "Messages" ? path.startsWith("/admin/messages") : label === "Analytics" ? false : path === href;
+              const current = path === href || path.startsWith(`${href}/`);
               return (
-                <Link key={label} href={label === "Analytics" ? "/admin" : href} className={current ? "is-current" : ""}>
+                <Link key={label} href={href} className={current ? "is-current" : ""}>
                   <Icon d={icon} />
                   <span>{label}</span>
                   {label === "Messages" && counts.enquiries ? <b className="is-note">{counts.enquiries}</b> : null}
@@ -119,6 +119,7 @@ function titleFor(path) {
   if (path.startsWith("/admin/messages")) return "Messages";
   if (path.startsWith("/admin/customers")) return "Customers";
   if (path.startsWith("/admin/type")) return "Type";
+  if (path.startsWith("/admin/analytics")) return "Analytics";
   if (path.startsWith("/admin/team")) return "Team";
   if (path.startsWith("/admin/settings")) return "Settings";
   return "Dashboard";

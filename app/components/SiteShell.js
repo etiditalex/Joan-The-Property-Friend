@@ -13,6 +13,17 @@ function Icon({ d }) {
   );
 }
 
+function viewKind(path) {
+  if (path === "/") return "home";
+  if (path === "/for-sale" || path.startsWith("/for-sale/")) return "catalog";
+  if (path.startsWith("/property/")) return "property";
+  if (path === "/blog") return "blog";
+  if (path.startsWith("/blog/")) return "article";
+  if (path === "/contact") return "contact";
+  if (path === "/about") return "about";
+  return "";
+}
+
 const saleLinks = [
   ["/for-sale?type=house", "Houses"],
   ["/for-sale?type=apartment", "Apartments"],
@@ -40,6 +51,17 @@ export function SiteShell({ children }) {
   useEffect(() => {
     setOpen(false);
     document.body.classList.remove("menu-open");
+  }, [path]);
+
+  useEffect(() => {
+    const kind = viewKind(path);
+    if (!kind) return;
+    fetch("/api/views", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path, kind }),
+      keepalive: true
+    }).catch(() => {});
   }, [path]);
 
   const toggle = () => {

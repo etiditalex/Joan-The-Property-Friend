@@ -46,9 +46,19 @@ create table if not exists enquiries (
   created_at timestamptz not null default now()
 );
 
+create table if not exists views (
+  id uuid primary key default gen_random_uuid(),
+  path text not null,
+  kind text not null,
+  property_id text default '',
+  title text default '',
+  created_at timestamptz not null default now()
+);
+
 alter table properties enable row level security;
 alter table posts enable row level security;
 alter table enquiries enable row level security;
+alter table views enable row level security;
 
 drop policy if exists "public read properties" on properties;
 create policy "public read properties" on properties for select using (true);
@@ -65,7 +75,18 @@ create policy "public insert enquiries" on enquiries
     and char_length(regexp_replace(phone, '[^0-9]', '', 'g')) >= 9
   );
 
--- Visitors can send an enquiry. They cannot read the list.
+drop policy if exists "public insert views" on views;
+create policy "public insert views" on views
+  for insert
+  to anon, authenticated
+  with check (
+    char_length(path) between 1 and 200
+    and path not like '/admin%'
+    and path not like '/desk-preview%'
+    and kind in ('home', 'catalog', 'property', 'blog', 'article', 'contact', 'about')
+  );
+
+-- Visitors can send an enquiry and a page view is recorded. They cannot read either list.
 -- The desk reads enquiries with the service role key, which bypasses these policies.
 -- The twelve sample properties and the sample blog are copied in the first time
 -- the site finds these tables empty. Edit or replace them from the desk.
