@@ -123,7 +123,7 @@
 .desk-user { display: flex; align-items: center; gap: 10px; }
 .desk-user img { width: 40px; height: 40px; border-radius: 999px; object-fit: cover; background: #16140f; }
 .desk-user strong, .desk-user small { display: block; }
-.desk-user strong { font-size: 14px; }
+.desk-user strong { font-size: 14px; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .desk-user small { color: #8d6b32; font-size: 12px; }
 .desk-content { padding: 22px; }
 

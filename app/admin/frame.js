@@ -24,10 +24,11 @@ const others = [
   ["/admin", "Analytics", "M4 19V10M10 19V5M16 19v-7M22 19H2"],
   ["/admin/customers", "Customer", "M12 12a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4ZM5 19c.8-2.6 3-4 7-4s6.2 1.4 7 4"],
   ["/admin/messages", "Messages", "M4 6h16v10H7l-3 3V6Z"],
+  ["/admin/team", "Team", "M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM4 19c.6-2.4 2.4-3.5 4-3.5s3.4 1.1 4 3.5M12 19c.6-2.4 2.4-3.5 4-3.5s3.4 1.1 4 3.5"],
   ["/admin/settings", "Settings", "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM12 3.5v2M12 18.5v2M4.8 6.2l1.4 1.4M17.8 16.4l1.4 1.4M3.5 12h2M18.5 12h2M4.8 17.8l1.4-1.4M17.8 7.6l1.4-1.4"]
 ];
 
-export function DeskFrame({ children, counts }) {
+export function DeskFrame({ children, counts, session }) {
   const path = usePathname();
   const propertyOpen = path.startsWith("/admin/property");
   const nested = path !== "/admin";
@@ -95,8 +96,8 @@ export function DeskFrame({ children, counts }) {
             <div className="desk-user">
               <img src={site.logo} alt="" />
               <div>
-                <strong>Joan</strong>
-                <small>Property Partner</small>
+                <strong>{session?.email || "Joan"}</strong>
+                <small>{session?.role === "manager" ? "Manager" : "Admin"}</small>
               </div>
             </div>
           </header>
@@ -118,6 +119,7 @@ function titleFor(path) {
   if (path.startsWith("/admin/messages")) return "Messages";
   if (path.startsWith("/admin/customers")) return "Customers";
   if (path.startsWith("/admin/type")) return "Type";
+  if (path.startsWith("/admin/team")) return "Team";
   if (path.startsWith("/admin/settings")) return "Settings";
   return "Dashboard";
 }

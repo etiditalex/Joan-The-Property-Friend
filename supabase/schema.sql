@@ -1,4 +1,7 @@
 -- Joan Property Friend. Run this in the Supabase SQL editor.
+-- Desk logins live in Authentication, not in these tables.
+-- Create the first user under Authentication → Users (email and password, confirmed).
+-- Further admins and managers are created from the desk Team page.
 
 create table if not exists properties (
   id text primary key,
