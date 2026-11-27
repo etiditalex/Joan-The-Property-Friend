@@ -57,3 +57,5 @@ drop policy if exists "public read posts" on posts;
 create policy "public read posts" on posts for select using (true);
 
 -- Writes use the service role key, which bypasses these policies.
+-- The twelve sample properties and the sample blog are copied in the first time
+-- the site finds these tables empty. Edit or replace them from the desk.
