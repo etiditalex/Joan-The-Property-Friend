@@ -31,7 +31,7 @@ export function BlogForm({ post }) {
         body: JSON.stringify({ ...data, image })
       });
       const json = await readResponse(response);
-      if (!response.ok) {
+      if (!response.ok || !json?.slug) {
         setError(json.error || "Could not save.");
         setSaving(false);
         return;

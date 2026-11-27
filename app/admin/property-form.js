@@ -38,7 +38,7 @@ export function PropertyForm({ property }) {
         body: JSON.stringify({ ...data, image, gallery: gallery.join("\n") })
       });
       const json = await readResponse(response);
-      if (!response.ok) {
+      if (!response.ok || !json?.id) {
         setError(json.error || "Could not save.");
         setSaving(false);
         return;

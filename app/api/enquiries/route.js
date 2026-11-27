@@ -10,7 +10,12 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const body = await request.json();
+  let body = {};
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "The message was empty. Please fill in the form and try again." }, { status: 400 });
+  }
   const name = String(body.name || "").trim();
   const phone = String(body.phone || "").trim();
   if (name.length < 2 || phone.replace(/\D/g, "").length < 9) {
@@ -28,7 +33,10 @@ export async function POST(request) {
     });
     return NextResponse.json({ ok: true });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message = /row-level security/i.test(error.message)
+      ? "The message could not be saved. Ask Joan to allow enquiries in Supabase."
+      : error.message;
+    return NextResponse.json({ error: message || "The message did not send." }, { status: 500 });
   }
 }
 

@@ -11,7 +11,12 @@ export async function GET() {
 
 export async function POST(request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
-  const body = await request.json();
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "The form was empty. Fill it in and try again." }, { status: 400 });
+  }
   const title = String(body.title || "").trim();
   const image = String(body.image || "").trim();
   if (!title || !image) return NextResponse.json({ error: "Add a title and a photo." }, { status: 400 });
