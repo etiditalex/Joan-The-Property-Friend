@@ -228,6 +228,8 @@
 .desk-table a { color: #8d6b32; font-weight: 700; }
 .desk-table td .desk-plain + .desk-plain { margin-left: 8px; }
 .desk-check { width: 44px; padding-right: 0; }
+.desk-email { min-width: 220px; }
+.desk-note { min-width: 320px; width: 28%; line-height: 1.5; white-space: normal; }
 .desk-check input { width: 16px; height: 16px; accent-color: #8d6b32; }
 .desk-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 18px 0; }
 .desk-plain {

@@ -113,10 +113,10 @@ export function MessagesTable({ enquiries }) {
               </th>
               <th>Name</th>
               <th>Phone</th>
-              <th>Email</th>
+              <th className="desk-email">Email</th>
               <th>Looking for</th>
               <th>Place</th>
-              <th>Note</th>
+              <th className="desk-note">Note</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -134,10 +134,10 @@ export function MessagesTable({ enquiries }) {
                 </td>
                 <td>{item.name}</td>
                 <td>{item.phone}</td>
-                <td>{item.email}</td>
+                <td className="desk-email">{item.email}</td>
                 <td>{item.kind}</td>
                 <td>{item.location}</td>
-                <td>{item.note}</td>
+                <td className="desk-note">{item.note}</td>
                 <td>{item.read ? "Read" : "New"}</td>
                 <td>
                   <button className="desk-plain" type="button" disabled={busy} onClick={() => openRow(item)}>Open</button>

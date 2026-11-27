@@ -13,7 +13,7 @@ export default async function DeskLayout({ children }) {
   if (!session) redirect("/admin/login");
   const [properties, posts, enquiries] = await Promise.all([listProperties(), listPosts(), listEnquiries()]);
   return (
-    <DeskFrame session={session} counts={{ properties: properties.length, posts: posts.length, enquiries: enquiries.length }}>
+    <DeskFrame session={session} counts={{ properties: properties.length, posts: posts.length, enquiries: enquiries.filter((item) => !item.read).length }}>
       {children}
     </DeskFrame>
   );
