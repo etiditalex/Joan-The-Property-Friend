@@ -144,10 +144,28 @@
   overflow: hidden;
 }
 .desk-panel h2 { font-size: 16px; padding: 16px 18px 0; }
+.desk-table-wrap { overflow-x: auto; }
 .desk-table { width: 100%; border-collapse: collapse; }
-.desk-table th, .desk-table td { text-align: left; padding: 12px 18px; border-top: 1px solid #f0f0f0; font-size: 14px; }
+.desk-table th, .desk-table td { text-align: left; padding: 12px 18px; border-top: 1px solid #f0f0f0; font-size: 14px; vertical-align: top; }
 .desk-table th { color: #6d7278; font-weight: 600; }
 .desk-table a { color: #8d6b32; font-weight: 700; }
+.desk-check { width: 44px; padding-right: 0; }
+.desk-check input { width: 16px; height: 16px; accent-color: #8d6b32; }
+.desk-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 18px 0; }
+.desk-plain {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #e4e0d8;
+  background: #fff;
+  color: #16140f;
+  font-weight: 700;
+  cursor: pointer;
+}
+.desk-plain:disabled, .desk-gold:disabled, .desk-dark:disabled { opacity: 0.45; cursor: default; }
 .desk-actions { display: flex; gap: 10px; margin-bottom: 14px; }
 .desk-gold, .desk-dark {
   display: inline-flex;

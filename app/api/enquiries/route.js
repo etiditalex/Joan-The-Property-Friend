@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
-import { listEnquiries, saveEnquiry } from "@/lib/store";
+import { deleteEnquiries, listEnquiries, saveEnquiry } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,19 @@ export async function POST(request) {
       budget: body.budget || "",
       note: String(body.note || "").trim()
     });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+  const body = await request.json().catch(() => ({}));
+  const ids = Array.isArray(body.ids) ? body.ids : [];
+  if (!ids.length) return NextResponse.json({ error: "Choose a message to delete." }, { status: 400 });
+  try {
+    await deleteEnquiries(ids);
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
