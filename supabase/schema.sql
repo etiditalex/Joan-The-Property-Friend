@@ -56,6 +56,16 @@ create policy "public read properties" on properties for select using (true);
 drop policy if exists "public read posts" on posts;
 create policy "public read posts" on posts for select using (true);
 
--- Writes use the service role key, which bypasses these policies.
+drop policy if exists "public insert enquiries" on enquiries;
+create policy "public insert enquiries" on enquiries
+  for insert
+  to anon, authenticated
+  with check (
+    char_length(btrim(name)) >= 2
+    and char_length(regexp_replace(phone, '[^0-9]', '', 'g')) >= 9
+  );
+
+-- Visitors can send an enquiry. They cannot read the list.
+-- The desk reads enquiries with the service role key, which bypasses these policies.
 -- The twelve sample properties and the sample blog are copied in the first time
 -- the site finds these tables empty. Edit or replace them from the desk.
