@@ -35,32 +35,25 @@ export function EnquiryForm({ interest = "", compact = false }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      const text = await saved.text();
-      let json = {};
-      try {
-        json = text ? JSON.parse(text) : {};
-      } catch {
-        json = {};
-      }
-      if (!saved.ok || !text) {
+      const result = await saved.json().catch(() => null);
+      if (!saved.ok || result?.ok !== true) {
         setFailed(true);
-        setNote(json.error || "The message did not send. Please try again.");
-        setSending(false);
+        const error = typeof result?.error === "string" && result.error.trim();
+        setNote(
+          saved.status >= 500 || !error
+            ? "We couldn't confirm receipt of your enquiry. Please try again or email Joan directly."
+            : error
+        );
         return;
       }
-      const summary = `${payload.name} is looking at a ${payload.kind.toLowerCase()} in ${payload.location}, budget ${payload.budget}.`;
-      setFailed(false);
-      setNote(`Thank you, ${payload.name}. ${summary} Joan will use ${payload.phone} to reach you.`);
+      setNote(`Thank you, ${payload.name}. We received your enquiry. Joan will use ${payload.phone} to reach you.`);
       form.reset();
-      if (site.email) {
-        const body = encodeURIComponent(`${summary}\nPhone: ${payload.phone}\nEmail: ${payload.email}\n${payload.note}`);
-        window.location.href = `mailto:${site.email}?subject=${encodeURIComponent("Enquiry: " + payload.kind)}&body=${body}`;
-      }
     } catch {
       setFailed(true);
-      setNote("The message did not send. Check your connection and try again.");
+      setNote("We couldn't confirm receipt of your enquiry. Check your connection and try again.");
+    } finally {
+      setSending(false);
     }
-    setSending(false);
   };
 
   return (
@@ -104,7 +97,10 @@ export function EnquiryForm({ interest = "", compact = false }) {
         <textarea name="note" rows={4} placeholder="A day that suits you, or a listing you already like" />
       </label>
       <div className="form-actions">
-        <p className={failed ? "form-note is-error" : "form-note"} role="status">{note}</p>
+        <p className={failed ? "form-note is-error" : "form-note"} role="status">
+          {note}
+          {failed && site.email && <> <a href={`mailto:${site.email}`}>Email Joan</a></>}
+        </p>
         <button className="submit" type="submit" disabled={sending}>{sending ? "Sending…" : "Send to Joan"}</button>
       </div>
     </form>
